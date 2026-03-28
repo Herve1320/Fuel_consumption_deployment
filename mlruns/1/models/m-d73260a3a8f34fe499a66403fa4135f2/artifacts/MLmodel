@@ -1,0 +1,23 @@
+artifact_path: file:C:/Users/User/Downloads/Fuel_consumption_project/mlruns/1/models/m-d73260a3a8f34fe499a66403fa4135f2/artifacts
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.12.12
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.8.0
+    skops_trusted_types: null
+mlflow_version: 3.10.1
+model_id: m-d73260a3a8f34fe499a66403fa4135f2
+model_size_bytes: 1294
+model_uuid: m-d73260a3a8f34fe499a66403fa4135f2
+prompts: null
+run_id: 3b81594ad7e848b1804a086e19e8c34d
+utc_time_created: '2026-03-28 02:42:46.680271'
