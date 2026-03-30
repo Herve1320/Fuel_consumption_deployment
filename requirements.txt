@@ -7,3 +7,4 @@ dvc
 fastapi
 uvicorn
 boto3
+pydantic
