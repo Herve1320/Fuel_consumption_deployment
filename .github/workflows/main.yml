@@ -30,7 +30,7 @@ jobs:
           PYTHONPATH: ${{ github.workspace }}/include
         run: |
           # This runs your new tests and ignores the Airflow examples
-          pytest tests/test_logic.py
+          pytest tests/tests.py
 
       - name: Build Docker Image
         run: |
