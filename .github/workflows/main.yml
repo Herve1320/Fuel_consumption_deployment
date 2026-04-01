@@ -19,8 +19,9 @@ jobs:
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          # We install apache-airflow here so pytest can import 'DagBag'
-          pip install apache-airflow==2.10.2
+          # We skip the full 'apache-airflow' to avoid the google-re2/Bazel error
+          # If you need Airflow classes for imports, use the lighter client
+          pip install apache-airflow-client 
           pip install -r requirements.txt
           pip install pytest
 
