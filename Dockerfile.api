@@ -16,7 +16,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Step 5: Copy your project files into the container
 # We copy the src folder and the models folder
 COPY src/ ./src/
-COPY models/ ./models/
+COPY include/models/ ./models/
 
 # Step 6: Expose the port FastAPI runs on
 EXPOSE 8000
