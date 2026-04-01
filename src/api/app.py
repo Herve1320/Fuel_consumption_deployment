@@ -5,15 +5,15 @@ import joblib
 import os
 import uvicorn
 
-app = FastAPI(title="Fuel Consumption API - demind.app")
+app = FastAPI(title="Fuel Consumption API")
 
 # --- 1. SET DEFINITIVE PATHS ---
 # Change from the hardcoded C:\ path to a relative path for Docker
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # This will look for /app/models/production/...
-MODEL_PATH = os.path.join("models", "production", "best_model.model")
-PREPROCESSOR_PATH = os.path.join("models", "preprocessor.pkl")
+MODEL_PATH = os.path.join(BASE_DIR,"include","models", "production", "best_model.model")
+PREPROCESSOR_PATH = os.path.join(BASE_DIR, "include", "models", "preprocessor.pkl")
 
 # --- 2. INPUT DATA SCHEMA ---
 class InputSchema(BaseModel):

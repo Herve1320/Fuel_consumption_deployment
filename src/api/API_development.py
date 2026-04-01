@@ -5,15 +5,14 @@ import joblib
 import os
 import uvicorn
 
-app = FastAPI(title="Fuel Consumption API - demind.app")
+app = FastAPI(title="Fuel Consumption API")
 
 # --- 1. SET DEFINITIVE PATHS ---
 # Using the absolute path to your project folder
 BASE_DIR = r"C:\Users\User\Downloads\Fuel_consumption_project"
 
-MODEL_PATH = os.path.join(BASE_DIR, "models", "production", "best_model.model")
-PREPROCESSOR_PATH = os.path.join(BASE_DIR, "models", "preprocessor.pkl")
-
+MODEL_PATH = os.path.join(BASE_DIR,"include","models", "production", "best_model.model")
+PREPROCESSOR_PATH = os.path.join(BASE_DIR, "include", "models", "preprocessor.pkl")
 # --- 2. INPUT DATA SCHEMA ---
 class InputSchema(BaseModel):
     MODEL_YEAR: int
