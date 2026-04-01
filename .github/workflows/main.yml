@@ -27,11 +27,10 @@ jobs:
 
       - name: Run Tests
         env:
-          # This tells Python to look in the 'include' folder for your modules
           PYTHONPATH: ${{ github.workspace }}/include
         run: |
-          # We run pytest. If your tests are in a 'tests' folder, this will find them.
-          pytest tests/
+          # This runs your new tests and ignores the Airflow examples
+          pytest tests/test_logic.py
 
       - name: Build Docker Image
         run: |
