@@ -1,18 +1,23 @@
 import pytest
 import numpy as np
-from include.MLflow_model import eval_metrics
+# This import works because of the PYTHONPATH we set in the YAML
+from MLflow_model import eval_metrics 
 
-def test_eval_metrics_accuracy():
-    # Test the math behind your model evaluation
-    actual = np.array([10, 20, 30])
-    pred = np.array([10, 20, 30])
+def test_eval_metrics_logic():
+    # Test with perfect prediction
+    actual = np.array([10.0, 20.0, 30.0])
+    pred = np.array([10.0, 20.0, 30.0])
     rmse, mae, r2 = eval_metrics(actual, pred)
     
-    assert rmse == 0
-    assert mae == 0
+    assert rmse == 0.0
+    assert mae == 0.0
     assert r2 == 1.0
 
-def test_prediction_output_type():
-    # Example: Ensuring a mock prediction returns a float
-    dummy_prediction = np.array([15.5])
-    assert isinstance(dummy_prediction[0], (float, np.float64))
+def test_eval_metrics_error():
+    # Test with known error
+    actual = np.array([10.0])
+    pred = np.array([12.0])
+    rmse, mae, r2 = eval_metrics(actual, pred)
+    
+    assert mae == 2.0
+    assert rmse == 2.0
