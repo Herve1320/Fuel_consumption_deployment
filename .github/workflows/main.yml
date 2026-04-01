@@ -1,0 +1,38 @@
+name: Fuel Project CI/CD
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          # We install apache-airflow here so pytest can import 'DagBag'
+          pip install apache-airflow==2.10.2
+          pip install -r requirements.txt
+          pip install pytest
+
+      - name: Run Tests
+        env:
+          # This tells Python to look in the 'include' folder for your modules
+          PYTHONPATH: ${{ github.workspace }}/include
+        run: |
+          # We run pytest. If your tests are in a 'tests' folder, this will find them.
+          pytest tests/
+
+      - name: Build Docker Image
+        run: |
+          # Ensures your Dockerfile.api is valid and can build
+          docker build -t fuel-consumption-api:latest -f Dockerfile.api .
