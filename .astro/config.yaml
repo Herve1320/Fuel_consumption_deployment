@@ -1,0 +1,4 @@
+project:
+  name: fuel-consumption-project
+postgres:
+  port: 5435
