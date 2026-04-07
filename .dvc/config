@@ -1,4 +1,6 @@
 [core]
-    remote = myremote
+    remote = origin
 ['remote "myremote"']
     url = C:\Users\User\Documents\dvc_storage
+['remote "origin"']
+    url = https://dagshub.com/Herve1320/Fuel_consumption.dvc

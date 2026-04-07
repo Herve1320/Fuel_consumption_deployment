@@ -103,9 +103,3 @@ if __name__ == "__main__":
     )
 
 
-# if __name__ == "__main__":
-#     run_feature_engineering(
-#         "C:\\Users\\User\\Downloads\\Fuel_consumption_project\\fuel_consumption2015-2024.csv",
-#         "C:\\Users\\User\\Downloads\\Fuel_consumption_project\\data\\processed",
-#         "C:\\Users\\User\\Downloads\\Fuel_consumption_project\\models\\preprocessor.pkl",
-#     )

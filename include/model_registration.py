@@ -1,61 +1,82 @@
 import mlflow
 from mlflow.tracking import MlflowClient
-import os
+import dagshub
 
-# --- CONFIGURATION ---
-# Points to the MLflow server running on your host machine
-MLFLOW_TRACKING_URI = "http://host.docker.internal:5000"
+# ----------------------------
+# DAGSHUB / MLFLOW SETUP
+# ----------------------------
+dagshub.init(
+    repo_owner='Herve1320',
+    repo_name='Fuel_consumption',
+    mlflow=True
+)
+
+# ----------------------------
+# CONFIG
+# ----------------------------
 EXPERIMENT_NAME = "Fuel_Consumption_Comparison"
-REGISTERED_MODEL_NAME = "Fuel_Consumption_Model" 
+REGISTERED_MODEL_NAME = "Fuel_Consumption_Model"
 ALIAS_NAME = "Champion"
 
 def export_and_register_champion():
-    """
-    Finds the best performing model in MLflow and labels it as 'Champion'
-    for the Production API to use.
-    """
-    # 1. Connect to the MLflow Network Server
-    mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
     client = MlflowClient()
-    
-    # 2. Find the experiment
+
+    # 1. Get Experiment
     experiment = client.get_experiment_by_name(EXPERIMENT_NAME)
     if not experiment:
-        print(f"❌ Experiment '{EXPERIMENT_NAME}' not found! Ensure training has run.")
+        print(f"❌ Experiment '{EXPERIMENT_NAME}' not found!")
         return
 
-    # 3. Search for the best run based on R2 Score
-    # We order by R2 DESC so the highest value is the first result
+    # 2. Get Best Run
     runs = client.search_runs(
         experiment_ids=[experiment.experiment_id],
-        max_results=1,
-        order_by=["metrics.r2 DESC"]
+        order_by=["metrics.r2 DESC"],
+        max_results=1
     )
 
     if not runs:
-        print("⚠️ No runs found in MLflow. Nothing to register.")
+        print("❌ No runs found.")
         return
 
     best_run = runs[0]
     run_id = best_run.info.run_id
-    r2_score = best_run.data.metrics.get('r2', 0)
-    
-    print(f"🏆 Best Run Found: {run_id} | R2 Score: {r2_score:.4f}")
+    r2 = best_run.data.metrics.get("r2", 0)
 
-    # 4. Register this specific version in the Model Registry
-    # This creates or updates 'Fuel_Consumption_Model' in the MLflow UI
+    print(f"🏆 Best Run: {run_id} | R2: {r2:.4f}")
+
+    # 3. Construct Source URI
+    # This points to the "model" folder you defined in your training script
     model_uri = f"runs:/{run_id}/model"
-    model_version = mlflow.register_model(model_uri, REGISTERED_MODEL_NAME)
 
-    # 5. Assign the 'Champion' Alias
-    # Your FastAPI will now pull this specific version automatically
-    client.set_registered_model_alias(
-        name=REGISTERED_MODEL_NAME,
-        alias=ALIAS_NAME,
-        version=model_version.version
-    )
+    try:
+        # 4. Check if the Registered Model exists, if not, create it
+        try:
+            client.get_registered_model(REGISTERED_MODEL_NAME)
+        except:
+            print(f"Creating registered model '{REGISTERED_MODEL_NAME}'...")
+            client.create_registered_model(REGISTERED_MODEL_NAME)
 
-    print(f"✅ Version {model_version.version} successfully promoted to '{ALIAS_NAME}'!")
+        # 5. Create the Model Version
+        # Using client.create_model_version is more robust than mlflow.register_model
+        print(f"Registering version for {run_id}...")
+        model_version = client.create_model_version(
+            name=REGISTERED_MODEL_NAME,
+            source=model_uri,
+            run_id=run_id
+        )
+
+        # 6. Set Alias
+        client.set_registered_model_alias(
+            name=REGISTERED_MODEL_NAME,
+            alias=ALIAS_NAME,
+            version=model_version.version
+        )
+
+        print(f"✅ Successfully registered version {model_version.version}")
+        print(f"✅ Alias '{ALIAS_NAME}' assigned to version {model_version.version}")
+
+    except Exception as e:
+        print(f"❌ Error during registration: {e}")
 
 if __name__ == "__main__":
     export_and_register_champion()
