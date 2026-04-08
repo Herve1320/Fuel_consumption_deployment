@@ -3,7 +3,7 @@ name: Fuel Project CI/CD
 on:
   push:
     branches: [ main ]
-    
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
@@ -19,22 +19,19 @@ jobs:
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          # We skip the full 'apache-airflow' to avoid the google-re2/Bazel error
-          # If you need Airflow classes for imports, use the lighter client
+          # Using the lighter client to avoid Bazel/re2 compilation errors on the runner
           pip install apache-airflow-client 
           pip install -r requirements.txt
           pip install pytest
 
       - name: Run Tests
         env:
+          # This token allows pytest to authorize with DagsHub without a browser
           DAGSHUB_USER_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
-        run: |          # This runs your new tests and ignores the Airflow examples
-          pytest tests/tests.py
         run: |
-          # This runs your new tests and ignores the Airflow examples
           pytest tests/tests.py
 
       - name: Build Docker Image
         run: |
-          # Ensures your Dockerfile.api is valid and can build
+          # Validates that the Dockerfile.api is functional for deployment
           docker build -t fuel-consumption-api:latest -f Dockerfile.api .
