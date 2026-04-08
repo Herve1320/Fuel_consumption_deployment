@@ -27,7 +27,9 @@ jobs:
 
       - name: Run Tests
         env:
-          PYTHONPATH: ${{ github.workspace }}/include
+          DAGSHUB_USER_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
+        run: |          # This runs your new tests and ignores the Airflow examples
+          pytest tests/tests.py
         run: |
           # This runs your new tests and ignores the Airflow examples
           pytest tests/tests.py
