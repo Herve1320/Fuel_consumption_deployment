@@ -26,8 +26,9 @@ jobs:
 
       - name: Run Tests
         env:
-          # This token allows pytest to authorize with DagsHub without a browser
           DAGSHUB_USER_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
+          # This tells Python to look in the current directory and the 'include' folder
+          PYTHONPATH: .:${{ github.workspace }}/include
         run: |
           pytest tests/tests.py
 
